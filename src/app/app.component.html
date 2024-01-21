@@ -1,6 +1,7 @@
 <div class="fileViewer">
   <pdf-viewer
     class="pdf-viewer"
+    [ngClass]="{ displayUnderlyingText: displayUnderlyingText }"
     [src]="pdfSrc"
     [render-text]="true"
     [original-size]="false"
@@ -11,4 +12,5 @@
     (page-rendered)="pageRendered($event)"
   ></pdf-viewer>
   <button (click)="checkSpans()">Check Spans</button>
+  <button (click)="toggleUnderlyingText()">Show underlying text</button>
 </div>

@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, HostListener } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
@@ -10,7 +11,7 @@ interface HighlightedText {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, PdfViewerModule],
+  imports: [RouterOutlet, PdfViewerModule, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -28,7 +29,7 @@ export class AppComponent {
   backend, we avoid errors where same word gets highlighted twice.
   */
   pdfSrc = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
-
+  displayUnderlyingText: boolean = false;
   rawSpans: {
     row: Element;
     highlightedText: HighlightedText[];
@@ -104,22 +105,41 @@ export class AppComponent {
         const text = span.rawText;
         const highlightedText: HighlightedText[] = span.highlightedText;
 
-        const highlightedTextIndex = highlightedText[0].startRange;
-        const highlightedTextLength = highlightedText.length;
-        const spanTextBeforeHighlight = text.substring(0, highlightedTextIndex);
-        const spanTextAfterHighlight = text.substring(
-          highlightedTextIndex + highlightedTextLength
-        );
+        highlightedText.forEach((highlight) => {
+          const startRange = highlight.startRange;
+          const endRange = highlight.endRange;
 
-        const spanTextElement =
-          "<span style='background-color:yellow'>" +
-          highlightedText +
-          '</span>';
+          const spanTextBeforeHighlight = text.substring(0, startRange);
+          const spanTextAfterHighlight = text.substring(endRange);
+          const spanTextElement =
+            "<span style='background-color: yellow'>" +
+            text.substring(startRange, endRange) +
+            '</span>';
 
-        //How do I insert the highlighted text here?
-        spanElement.innerHTML =
-          spanTextBeforeHighlight + spanTextElement + spanTextAfterHighlight;
+          spanElement.innerHTML =
+            spanTextBeforeHighlight + spanTextElement + spanTextAfterHighlight;
+        });
       }
     });
   }
+
+  toggleUnderlyingText() {
+    this.displayUnderlyingText = !this.displayUnderlyingText;
+  }
 }
+
+// const highlightedTextIndex = highlightedText[0].startRange;
+// const highlightedTextLength = highlightedText.length;
+// const spanTextBeforeHighlight = text.substring(0, highlightedTextIndex);
+// const spanTextAfterHighlight = text.substring(
+//   highlightedTextIndex + highlightedTextLength
+// );
+
+// const spanTextElement =
+//   "<span style='background-color:yellow'>" +
+//   highlightedText +
+//   '</span>';
+
+// //How do I insert the highlighted text here?
+// spanElement.innerHTML =
+//   spanTextBeforeHighlight + spanTextElement + spanTextAfterHighlight;
